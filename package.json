@@ -1,0 +1,26 @@
+{
+  "name": "blog-ejs",
+  "version": "1.0.0",
+  "description": "A new version of my simple blog, created in Node.js with EJS, Bootstrap 3, Express, Mongoose, and other modules.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NathanMBR/blog-ejs.git"
+  },
+  "author": "Nathan Murillo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NathanMBR/blog-ejs/issues"
+  },
+  "homepage": "https://github.com/NathanMBR/blog-ejs#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.6.2"
+  }
+}
