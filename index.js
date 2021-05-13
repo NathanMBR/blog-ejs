@@ -3,6 +3,10 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 
+// Models
+const Category = require("./models/Category");
+const Post = require("./models/Post");
+
 // Internal
 const config = require("./configs/config");
 const connection = require("./db/connection");
@@ -19,17 +23,17 @@ connection.authenticate().then(() => {
     console.log("An error ocurred while trying to connect to the database. Error: ");
     console.log(error);
 });
-// Routes
 
-app.get("/", (req, res) => {
-    res.redirect("/home");
-});
-// Separe this in new file
-app.get("/home", (req, res) => {
-    res.render("main/home");
-});
+// Routes
+const routes = {
+    main: require("./routes/main"),
+    admin: require("./routes/admin")
+};
+
+app.use("/", routes.main);
+app.use("/admin", routes.admin);
 
 // Listening
 app.listen(config.PORT, () => {
-    console.log(`Server online at localhost:${config.PORT}`);
+    console.log(`Server online in localhost:${config.PORT} at ${new Date()}`);
 });

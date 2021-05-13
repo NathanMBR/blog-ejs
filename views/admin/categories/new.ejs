@@ -1,0 +1,19 @@
+<%- include("../../partials/header.ejs") %>
+<%- include("../../partials/navbar.ejs") %>
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h1>Create a new category</h1>
+    </div>
+    <div class="card-body">
+        <form action="/admin/categories/new" method="post">
+            <label for="category">Category name:</label>
+            <input type="text" name="category" id="name" placeholder="Category name" class="form-control"> <br>
+            <input type="hidden" name="author" value="System Admin">
+            <button type="submit" id="submit" class="btn btn-outline-primary">Create category</button>
+        </form>
+        <a href="/admin/categories/all"><button class="btn btn-outline-secondary mt-2">Back</button></a>
+    </div>
+</div>
+
+<%- include("../../partials/footer.ejs") %>

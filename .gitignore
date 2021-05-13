@@ -2,3 +2,4 @@
 /public/css
 /public/js
 /db/connection.js
+/views/viewModel.ejs
