@@ -1,0 +1,31 @@
+<%- include("../../partials/header.ejs") %>
+<%- include("../../partials/navbar.ejs") %>
+
+<h1>Delete category</h1>
+<hr>
+<div class="card">
+    <div class="card-header">
+        <span>Are you sure you want to delete this category? This is an irreversible action.</span>
+    </div>
+    <div class="card-body">
+        <h2 style="font-size: 22px;">Info</h2>
+        <span>Category name: <%= category.category %></span> <br>
+        <span>Author: <%= category.author %></span> <br>
+        <small style="color: gray;">
+            <% if (category.createdAt.getTime() === category.updatedAt.getTime()) { %>
+                Created at <%= category.createdAt %>
+            <% } else { %>
+                Last updated at <%= category.updatedAt %>
+            <% } %>
+        </small>
+    </div>
+    <div class="card-footer">
+        <form action="/admin/categories/delete" method="POST">
+            <input type="hidden" name="id" value="<%= category.id %>">
+            <button type="submit" class="btn btn-outline-danger">Delete category</button>
+        </form>
+        <a class="btn btn-outline-secondary mt-2" href="/admin/categories/all">Back</a>
+    </div>
+</div>
+
+<%- include("../../partials/footer.ejs") %>

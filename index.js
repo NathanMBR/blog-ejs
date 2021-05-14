@@ -1,7 +1,6 @@
 // Modules
 const express = require("express");
 const app = express();
-const bodyParser = require("body-parser");
 
 // Models
 const Category = require("./models/Category");
@@ -13,8 +12,8 @@ const connection = require("./db/connection");
 
 // Configs
 app.set("view engine", "ejs");
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
+app.use(express.urlencoded({extended: false}));
+app.use(express.json());
 app.use(express.static("public"));
 
 connection.authenticate().then(() => {
