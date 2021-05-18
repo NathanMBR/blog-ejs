@@ -1,6 +1,15 @@
 <%- include("../partials/header.ejs") %>
 <%- include("../partials/navbar.ejs") %>
 
-<h1>In construction</h1>
+<h1>Administrative Panel</h1>
+<hr>
+<div class="card mb-4">
+    <div class="card-body">
+        <a href="/admin/panel/configurations" class="btn btn-outline-dark mb-2">Blog Configurations</a> <br>
+        <a href="/admin/categories/all" class="btn btn-outline-primary mb-2">View all categories</a> <br>
+        <a href="/admin/posts/all" class="btn btn-outline-primary mb-2">View all posts</a>
+    </div>
+</div>
+<a href="/home" class="btn btn-outline-secondary mb-2">Back</a>
 
 <%- include("../partials/footer.ejs") %>

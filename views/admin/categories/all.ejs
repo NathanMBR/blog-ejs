@@ -10,17 +10,18 @@
                 <h2 style="font-size: 28px;"><%= category.category %></h2>
             </div>
             <div class="card-body">
-                Author: <%= category.author %> <br>
-                <a class="btn btn-outline-primary mt-4" href="/admin/posts/all?category=<%= category.id %>">See all posts in this category</a> <br>
+                Author: <%= category.author %>
+                <hr>
+                <a class="btn btn-outline-primary mt-2" href="/admin/posts/all?category=<%= category.id %>">See all posts in this category</a> <br>
                 <a class="btn btn-outline-warning mt-2" href="/admin/categories/edit?category=<%= category.id %>">Edit</a>
                 <a class="btn btn-outline-danger mt-2" href="/admin/categories/delete?category=<%= category.id %>">Delete</a>
             </div>
             <div class="card-footer">
                 <small style="color: gray;">
                     <% if (category.createdAt.getTime() === category.updatedAt.getTime()) { %>
-                        Created at <%= category.createdAt %>
+                        Created on <%= dateFormatter(category.createdAt) %> at <%= hourFormatter(category.createdAt) %>
                     <% } else { %>
-                        Last updated at <%= category.updatedAt %>
+                        Last updated on <%= dateFormatter(category.updatedAt) %> at <%= hourFormatter(category.updatedAt) %>
                     <% } %>
                 </small>
             </div>
@@ -30,8 +31,8 @@
 <% } else { %>
     <h2 style="color: gray; font-size: 20px;">There's no categories to be shown.</h2>
 <% } %>
-
-<a class="btn btn-outline-success mt-4" href="/admin/categories/new">Create new category</a> <br>
+<hr>
+<a class="btn btn-outline-success" href="/admin/categories/new">Create new category</a> <br>
 <a class="btn btn-outline-secondary mt-2 mb-2" href="/admin/panel">Back</a>
 
 <%- include("../../partials/footer.ejs") %>

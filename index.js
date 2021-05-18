@@ -10,11 +10,15 @@ const Post = require("./models/Post");
 const config = require("./configs/config");
 const connection = require("./db/connection");
 
+// Helpers
+//const error404 = require("./helpers/error404");
+
 // Configs
 app.set("view engine", "ejs");
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 app.use(express.static("public"));
+//app.use(error404);
 
 connection.authenticate().then(() => {
     console.log("Successfully connected to the database.");

@@ -4,26 +4,21 @@ const router = require("express").Router();
 // Models
 const Category = require("../../models/Category");
 
-// Helper to write the paths
-const pathBuilder = (category, path) => {
-    const basePath = "admin/categories/";
-    let prefix = "";
-
-    if (category === "url")
-        prefix = "/";
-
-    return prefix + basePath + path;
-}
+// Helpers
+const nullFormValidation = require("../../helpers/nullFormValidation");
+const dateFormatter = require("../../helpers/dateFormatter");
+const hourFormatter = require("../../helpers/hourFormatter");
 
 // Routes
 router.get("/", (req, res) => {
-    res.redirect(pathBuilder("url", "all"));
+    res.redirect("/admin/categories/all");
 });
 
 router.get("/all", (req, res) => {
     Category.findAll().then(categories => {
-        res.render(pathBuilder("render", "all"), {categories: categories});
+        res.render("admin/categories/all", {categories: categories, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
     }).catch(error => {
+        // Error msg
         console.log("An error ocurred while trying to get data from the database. Error:");
         console.log(error);
         res.redirect("/admin/panel");
@@ -31,44 +26,42 @@ router.get("/all", (req, res) => {
 });
 
 router.get("/new", (req, res) => {
-    res.render(pathBuilder("render", "new"));
+    res.render("admin/categories/new");
 });
 
-router.post("/new", (req, res) => {
-    const errors = [];
-
-    // Anti undefined/null/0 validation
-    Object.keys(req.body).forEach(key => {
-        if (!req.body[key])
-            errors.push({errorMsg: `The category ${key} can't be empty.`})
-    });
-
-    if (errors.length === 0) {
+router.post("/new", nullFormValidation, (req, res) => {
+    if (req.body.errors.length === 0) {
         Category.create({
             category: req.body.category,
             author: req.body.author
         }).then(() => {
-            res.redirect(pathBuilder("url", "all"));
+            res.redirect("/admin/categories/all");
         }).catch(error => {
+            // Error msg
             console.log("An error ocurred while trying to save data in the database. Error: ");
             console.log(error);
         });
     } else {
-        res.redirect(pathBuilder("url", "new"));
+        // Error msg
+        res.redirect("/admin/categories/new");
     }
 });
 
 router.get("/delete", (req, res) => {
     if (req.query["category"] && !isNaN(req.query["category"]) && !Array.isArray(req.query["category"])) {
         Category.findByPk(req.query["category"]).then(category => {
-            res.render(pathBuilder("render", "delete"), {category: category});
+            if (category)
+                res.render("admin/categories/delete", {category: category, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
+            else
+                res.redirect("/404");
         }).catch(error => {
+            // Error msg
             console.log("An error ocurred while trying to get data from the database. Error:");
             console.log(error);
         });
     } else {
         // Error msg
-        res.redirect(pathBuilder("url", "all"));
+        res.redirect("/admin/categories/all");
     }
 });
 
@@ -80,36 +73,40 @@ router.post("/delete", (req, res) => {
             }
         }).then(() => {
             // Success msg
-            res.redirect(pathBuilder("url", "all"));
+            res.redirect("/admin/categories/all");
         }).catch(error => {
             // Error msg
             console.log("An error ocurred while trying to delete data from the database. Error:");
             console.log(error);
-            res.redirect(pathBuilder("url", "all"));
+            res.redirect("/admin/categories/all");
         })
     } else {
         // Error msg
-        res.redirect(pathBuilder("url", "all"));
+        res.redirect("/admin/categories/all");
     }
 });
 
 router.get("/edit", (req, res) => {
     if (req.query["category"] && !isNaN(req.query["category"]) && !Array.isArray(req.query["category"])) {
         Category.findByPk(req.query["category"]).then(category => {
-            res.render(pathBuilder("render", "edit"), {category: category});
+            if (category)
+                res.render("admin/categories/edit", {category: category, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
+            else
+                res.redirect("/404");
         }).catch(error => {
             // Error msg
             console.log("An error ocurred while trying to get data from the database. Error:");
             console.log(error);
+            res.redirect("/admin/categories/all");
         });
     } else {
         // Error msg
-        res.redirect(pathBuilder("url", "all"));
+        res.redirect("/admin/categories/all");
     }
 });
 
-router.post("/edit", (req, res) => {
-    if (req.body.id && !isNaN(req.body.id)) {
+router.post("/edit", nullFormValidation, (req, res) => {
+    if (req.body.id && !isNaN(req.body.id) && req.body.errors.length === 0) {
         Category.update({
             category: req.body.category
         }, {
@@ -117,11 +114,17 @@ router.post("/edit", (req, res) => {
                 id: req.body.id
             }
         }).then(() => {
-            res.redirect(pathBuilder("url", "all"));
-        }).catch(error => {})
+            // Success msg
+            res.redirect("/admin/categories/all");
+        }).catch(error => {
+            // Error msg
+            console.log("An error ocurred while trying to update data from the database. Error: ");
+            console.log(error);
+            res.redirect("/admin/categories/all");
+        })
     } else {
         // Error msg
-        res.redirect(pathBuilder("url", "all"));
+        res.redirect(`/admin/categories/edit?category=${req.body.id}`);
     }
 });
 

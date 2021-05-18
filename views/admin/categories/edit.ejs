@@ -1,9 +1,11 @@
 <%- include("../../partials/header.ejs") %>
 <%- include("../../partials/navbar.ejs") %>
 
+<h1>Edit category</h1>
+<hr>
 <div class="card mt-4">
     <div class="card-header">
-        <h1>Edit category</h1>
+        <h2 style="font-size: 28px;">Info</h2>
     </div>
     <div class="card-body">
         <form action="/admin/categories/edit" method="post">
@@ -11,9 +13,17 @@
             <input type="hidden" name="id" value="<%= category.id %>">
             <input type="text" name="category" id="name" placeholder="Category name" class="form-control" value="<%= category.category %>"> <br>
             <input type="hidden" name="author" value="<%= category.author %>">
+            <hr>
             <button type="submit" id="submit" class="btn btn-outline-warning">Edit category</button>
         </form>
         <a href="/admin/categories/all"><button class="btn btn-outline-secondary mt-2">Back</button></a>
+    </div>
+    <div class="card-footer">
+        <small>Created on <%= dateFormatter(category.createdAt) %> at <%= hourFormatter(category.createdAt) %> by <%= category.author %>
+            <% if (category.createdAt.getTime() !== category.updatedAt.getTime()) { %>
+                <br> Last updated on <%= dateFormatter(category.updatedAt) %> at <%= hourFormatter(category.updatedAt) %>
+            <% } %>
+        </small>
     </div>
 </div>
 

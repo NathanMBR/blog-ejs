@@ -8,4 +8,8 @@ router.get("/home", (req, res) => {
     res.render("main/home");
 });
 
+router.get("/404", (req, res) => {
+    res.render("main/404");
+});
+
 module.exports = router;
