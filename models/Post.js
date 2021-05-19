@@ -11,15 +11,15 @@ const Post = connection.define("posts", {
         type: Sequelize.TEXT,
         allowNull: false
     },
-    category_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
     post: {
         type: Sequelize.TEXT,
         allowNull: false
     },
     author: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    slug: {
         type: Sequelize.STRING,
         allowNull: false
     }

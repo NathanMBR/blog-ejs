@@ -4,3 +4,4 @@
 /db/connection.js
 /views/viewModel.ejs
 /toDo.txt
+/public/tinymce

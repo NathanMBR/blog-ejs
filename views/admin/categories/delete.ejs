@@ -13,7 +13,8 @@
             <span>Category name: <%= category.category %></span> <br>
             <span>Author: <%= category.author %></span>
             <hr>
-            <input type="hidden" name="id" value="<%= category.id %>">
+            <input type="hidden" name="id" value="<%= category.id %>" readonly>
+
             <button type="submit" class="btn btn-outline-danger">Delete category</button> <br>
             <a class="btn btn-outline-secondary mt-2" href="/admin/categories/all">Back</a>
         </div>

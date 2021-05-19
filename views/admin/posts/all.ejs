@@ -1,0 +1,37 @@
+<%- include("../../partials/header.ejs") %>
+<%- include("../../partials/navbar.ejs") %>
+
+<h1>
+    All posts 
+    <% if (category) { %>
+        from "<%= category.category %>" category
+    <% } %>
+    (<%= posts.length %>)
+</h1>
+<hr>
+<% if (posts.length > 0) { %>
+    <% posts.forEach(post => { %>
+        <div class="card mb-2">
+            <div class="card-header">
+                <h2 style="font-style: 28px;"><%= post.title %></h2>
+                <small><%= post.description %></small>
+            </div>
+
+            <div class="card-body">
+                <span>Author: <%= post.author %></span> <br>
+                <a href="/admin/posts/read?post=<%= post.slug %>" class="btn btn-outline-primary mt-2">See more</a>
+            </div>
+
+            <div class="card-footer">
+                Tempo
+            </div>
+        </div>
+    <% }); %>
+<% } else { %>
+    <h2 style="font-size: 20px;">There's no posts to be shown.</h2>
+<% } %>
+<hr>
+<a href="/admin/posts/new" class="btn btn-outline-success">Create new post</a> <br>
+<a href="/admin/panel" class="btn btn-outline-secondary mt-2">Back</a>
+
+<%- include("../../partials/footer.ejs") %>

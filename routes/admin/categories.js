@@ -15,7 +15,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/all", (req, res) => {
-    Category.findAll().then(categories => {
+    Category.findAll({order: [["category", "ASC"]]}).then(categories => {
         res.render("admin/categories/all", {categories: categories, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
     }).catch(error => {
         // Error msg
@@ -33,8 +33,9 @@ router.post("/new", nullFormValidation, (req, res) => {
     if (req.body.errors.length === 0) {
         Category.create({
             category: req.body.category,
-            author: req.body.author
+            author: "System Admin"
         }).then(() => {
+            // Success msg
             res.redirect("/admin/categories/all");
         }).catch(error => {
             // Error msg

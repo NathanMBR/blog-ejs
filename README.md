@@ -11,5 +11,6 @@ To use this repository, follow these steps:
     c. Change "password" to the password of your user <br>
 6 - Save the file and rename him to "connection.js" <br>
 7 - Download Bootstrap 4.1.3 or equivalent and put the "css" and "js" folders inside "public" folder <br>
-8 - Run the application with "node index.js" <br>
-9 - Access "localhost" in your browser.
+8 - Download TinyMCE 5.8.0 or equivalent and put the "/tinymce/js/tinymce" folder inside "public" folder <br>
+9 - Run the application with "node index.js" <br>
+10 - Access "localhost" in your browser.

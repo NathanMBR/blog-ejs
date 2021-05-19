@@ -1,18 +1,21 @@
 <%- include("../../partials/header.ejs") %>
 <%- include("../../partials/navbar.ejs") %>
 
-<h1>Edit category</h1>
+<h1 class="mt-4">Edit category</h1>
 <hr>
-<div class="card mt-4">
+<div class="card">
     <div class="card-header">
         <h2 style="font-size: 28px;">Info</h2>
     </div>
     <div class="card-body">
         <form action="/admin/categories/edit" method="post">
             <label for="category">Category name:</label>
-            <input type="hidden" name="id" value="<%= category.id %>">
-            <input type="text" name="category" id="name" placeholder="Category name" class="form-control" value="<%= category.category %>"> <br>
-            <input type="hidden" name="author" value="<%= category.author %>">
+            <input type="text" name="category" id="name" placeholder="Category name" class="form-control" value="<%= category.category %>" required> <br>
+
+            <input type="hidden" name="id" value="<%= category.id %>" readonly>
+
+            <input type="hidden" name="author" value="<%= category.author %>" readonly>
+
             <hr>
             <button type="submit" id="submit" class="btn btn-outline-warning">Edit category</button>
         </form>
