@@ -1,5 +1,7 @@
+// Modules
 const router = require("express").Router();
 
+// Routes
 const adminRoutes = {
     categories: require("./admin/categories"),
     posts: require("./admin/posts")
@@ -20,4 +22,5 @@ router.get("/panel/configurations", (req, res) => {
 router.use("/categories", adminRoutes.categories);
 router.use("/posts", adminRoutes.posts);
 
+// Export
 module.exports = router;

@@ -18,7 +18,7 @@ router.get("/all", (req, res) => {
     Category.findAll({order: [["category", "ASC"]]}).then(categories => {
         res.render("admin/categories/all", {categories: categories, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
     }).catch(error => {
-        // Error msg
+        // Error msg: internal error, pls try again
         console.log("An error ocurred while trying to get data from the database. Error:");
         console.log(error);
         res.redirect("/admin/panel");
@@ -35,15 +35,15 @@ router.post("/new", nullFormValidation, (req, res) => {
             category: req.body.category,
             author: "System Admin"
         }).then(() => {
-            // Success msg
+            // Success msg: successfully created
             res.redirect("/admin/categories/all");
         }).catch(error => {
-            // Error msg
+            // Error msg: internal error, pls try again
             console.log("An error ocurred while trying to save data in the database. Error: ");
             console.log(error);
         });
     } else {
-        // Error msg
+        // Error msgs: [each error]
         res.redirect("/admin/categories/new");
     }
 });
@@ -53,15 +53,17 @@ router.get("/delete", (req, res) => {
         Category.findByPk(req.query["category"]).then(category => {
             if (category)
                 res.render("admin/categories/delete", {category: category, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
-            else
-                res.redirect("/404");
+            else {
+                // Error msg: category not found
+                res.redirect("/admin/categories/all");                
+            }
         }).catch(error => {
-            // Error msg
+            // Error msg: internal error, pls try again
             console.log("An error ocurred while trying to get data from the database. Error:");
             console.log(error);
         });
     } else {
-        // Error msg
+        // Error msg: invalid parameter
         res.redirect("/admin/categories/all");
     }
 });
@@ -73,16 +75,16 @@ router.post("/delete", (req, res) => {
                 id: req.body.id
             }
         }).then(() => {
-            // Success msg
+            // Success msg: successfully deleted
             res.redirect("/admin/categories/all");
         }).catch(error => {
-            // Error msg
+            // Error msg: internal error, pls try again
             console.log("An error ocurred while trying to delete data from the database. Error:");
             console.log(error);
             res.redirect("/admin/categories/all");
         })
     } else {
-        // Error msg
+        // Error msg: invalid parameter
         res.redirect("/admin/categories/all");
     }
 });
@@ -92,16 +94,18 @@ router.get("/edit", (req, res) => {
         Category.findByPk(req.query["category"]).then(category => {
             if (category)
                 res.render("admin/categories/edit", {category: category, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
-            else
-                res.redirect("/404");
+            else {
+                // Error msg: category not found
+                res.redirect("/admin/categories/all");
+            }
         }).catch(error => {
-            // Error msg
+            // Error msg: internal error, pls try again
             console.log("An error ocurred while trying to get data from the database. Error:");
             console.log(error);
             res.redirect("/admin/categories/all");
         });
     } else {
-        // Error msg
+        // Error msg: invalid parameter
         res.redirect("/admin/categories/all");
     }
 });
@@ -115,18 +119,19 @@ router.post("/edit", nullFormValidation, (req, res) => {
                 id: req.body.id
             }
         }).then(() => {
-            // Success msg
+            // Success msg: successfully edited
             res.redirect("/admin/categories/all");
         }).catch(error => {
-            // Error msg
+            // Error msg: internal error, pls try again
             console.log("An error ocurred while trying to update data from the database. Error: ");
             console.log(error);
             res.redirect("/admin/categories/all");
         })
     } else {
-        // Error msg
+        // Error msg: invalid parameter
         res.redirect(`/admin/categories/edit?category=${req.body.id}`);
     }
 });
 
+// Export
 module.exports = router;

@@ -14,14 +14,14 @@
 
             <label for="category">Category:</label>
             <select name="category" class="form-control" required>
-                <option value="0"></option>
+                <option value="0">Select a category</option>
 
                 <% if (categories.length > 0) { %>
                     <% categories.forEach(category => { %>
                         <option value="<%= category.id %>"><%= category.category %></option>
                     <% }); %>
                 <% } else { %>
-                    <option value="0"><small style="color: gray; font-style: italic;">No categories available.</small></option>
+                    <option value="0">No categories available.</option>
                 <% } %>
             </select>
 

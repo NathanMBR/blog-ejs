@@ -22,6 +22,10 @@ const Post = connection.define("posts", {
     slug: {
         type: Sequelize.STRING,
         allowNull: false
+    },
+    deleted: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
     }
 });
 

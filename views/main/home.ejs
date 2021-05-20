@@ -1,6 +1,45 @@
 <%- include("../partials/header.ejs") %>
 <%- include("../partials/navbar.ejs") %>
 
-    <h1>Hello world!</h1>
+<% if (true) { %>
+    <div class="jumbotron mt-4">
+        <h1 class="display-4">Welcome!</h1>
+        <p class="lead">This is a blog made by Nathan Murillo.</p>
+        <hr class="my-4">
+        <p>Log in to use everything we offer.</p>
+        <a class="btn btn-outline-primary btn-lg mb-2" href="#" role="button">Log in</a> <br>
+        <small style="font-style: normal;">Don't have an account? <a href="#">Create account</a></small>
+    </div>
+<% } %>
+
+<h1 class="mt-4">Last posts</h1>
+<hr>
+<% if (posts) { %>
+    <% posts.forEach(post => { %>
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2 style="font-size: 28px;"><%= post.title %></h2>
+                <small><%= post.description %></small>
+            </div>
+            
+            <div class="card-body">
+                <span>Category: </span><a href="/posts/all?category=<%= post.categoryId %>"><%= post.category.category %></a> <hr>
+                <a href="/read/<%= post.slug %>" class="btn btn-outline-primary">Read post</a>
+            </div>
+
+            <div class="card-footer">
+                <small>
+                    <% if (post.createdAt.getTime() === post.updatedAt.getTime()) { %>
+                        Created on <%= dateFormatter(post.createdAt) %> at <%= hourFormatter(post.createdAt) %>
+                    <% } else { %>
+                        Updated on <%= dateFormatter(post.updatedAt) %> at <%= hourFormatter(post.updatedAt) %>
+                    <% } %>
+                </small>
+            </div>
+        </div>
+    <% }); %>
+<% } else { %>
+    <small style="font-size: 20px;">There's no posts to be shown.</small>
+<% } %>
 
 <%- include("../partials/footer.ejs") %>

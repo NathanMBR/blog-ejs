@@ -18,20 +18,27 @@
             </div>
 
             <div class="card-body">
+                <span>Category: <%= post.category.category %></span> <br>
                 <span>Author: <%= post.author %></span> <br>
                 <a href="/admin/posts/read?post=<%= post.slug %>" class="btn btn-outline-primary mt-2">See more</a>
             </div>
 
             <div class="card-footer">
-                Tempo
+                <small>
+                    <% if (post.createdAt.getTime() === post.updatedAt.getTime()) { %>
+                        Created on <%= dateFormatter(post.createdAt) %> at <%= hourFormatter(post.createdAt) %>
+                    <% } else { %>
+                        Last updated on <%= dateFormatter(post.updatedAt) %> at <%= hourFormatter(post.updatedAt) %>
+                    <% } %>
+                </small>
             </div>
         </div>
     <% }); %>
 <% } else { %>
-    <h2 style="font-size: 20px;">There's no posts to be shown.</h2>
+    <small style="font-size: 20px;">There's no posts to be shown.</small>
 <% } %>
 <hr>
 <a href="/admin/posts/new" class="btn btn-outline-success">Create new post</a> <br>
-<a href="/admin/panel" class="btn btn-outline-secondary mt-2">Back</a>
+<a href="/admin/panel" class="btn btn-outline-secondary mt-2 mb-4">Back</a>
 
 <%- include("../../partials/footer.ejs") %>
