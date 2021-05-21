@@ -18,6 +18,7 @@ router.get("/", (req, res) => {
 
 router.get("/all", async (req, res) => {
     const categoryId = req.query["category"];
+    console.log("\n\nCategory ID: " + categoryId);
     let category = null;
     let order = "DESC";
     const queryObject = {
@@ -32,6 +33,7 @@ router.get("/all", async (req, res) => {
         if (!isNaN(categoryId) && !Array.isArray(categoryId)) {
             try {
                 category = await Category.findByPk(categoryId);
+                console.log("Category found: " + category);
             } catch(error) {
                 // Error msg: internal error, pls try again
                 console.log("An error ocurred while trying to access data from the database. Error: ");
@@ -88,7 +90,7 @@ router.post("/new", nullFormValidation, (req, res) => {
         slug: slugify(req.body.title.toLowerCase())
     }}).then(post => {
         if (post)
-            req.body.errors.push({errorMsg: `There's already a post with this name.`});
+            req.body.errors.push({errorMsg: `There's already a post with this title.`});
     }).catch(error => {
         // Error msg: internal error, pls try again
         console.log("An error ocurred while trying to get data from the database. Error: ");
@@ -126,14 +128,132 @@ router.post("/new", nullFormValidation, (req, res) => {
 
 router.get("/delete", (req, res) => {
     if (req.query["post"] && !isNaN(req.query["post"]) && !Array.isArray(req.query["post"])) {
-        Post.findByPk(re).then(post => {
+        Post.findByPk(req.query["post"]).then(post => {
             if (post)
-                console.log("");
-                // do something
-            else
-                console.log("");
+                res.render("admin/posts/delete", {post: post});
+            else {
                 // Error msg: post not found
-                // do other something
+                res.redirect("/admin/posts/all");
+            }
+        }).catch(error => {
+            // Error msg: internal error, pls try again
+            console.log("An error ocurred while trying to get data from the database. Error: ");
+            console.log(error);
+            res.redirect("/admin/posts/all");
+        });
+    } else {
+        // Error msg: invalid parameter
+        res.redirect("/admin/posts/all");
+    }
+});
+
+router.post("/delete", nullFormValidation, (req, res) => {
+    if (!isNaN(req.body.id)) {
+        Post.update({
+            deleted: true
+        }, {
+            where: {
+                id: req.body.id
+            }
+        }).then(() => {
+            // Success msg: successfully deleted
+            res.redirect("/admin/posts/all");
+        }).catch(error => {
+            // Error msg: internal error, pls try again
+            console.log("An error ocurred while trying to update data from the database. Error: ");
+            console.log(error);
+            res.redirect("/admin/posts/all");
+        });
+    } else {
+        // Error msg: invalid parameter
+        res.redirect("/admin/posts/all");
+    }
+});
+
+router.get("/edit", (req, res) => {
+    if (req.query["post"] && !isNaN(req.query["post"]) && !Array.isArray(req.query["post"])) {
+        Category.findAll().then(categories => {
+            if (categories.length > 0) {
+                Post.findByPk(req.query["post"]).then(post => {
+                    if (post)
+                        res.render("admin/posts/edit", {post: post, categories: categories, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
+                    else {
+                        // Error msg: post not found
+                        res.redirect("/admin/posts/all");
+                    }
+                }).catch(error => {
+                    // Error msg: internal error, pls try again
+                    console.log("An error ocurred while trying to get data from the database. Error: ");
+                    console.log(error);
+                    res.redirect("/admin/posts/all");
+                });
+            } else {
+                // Error msg: no categories found, pls create one
+                res.redirect("/admin/categories/new");
+            }
+        }).catch(error => {
+            // Errro msg: internal error, pls try again
+            console.log("An error ocurred while trying to get data from the database. Error: ");
+            console.log(error);
+            res.redirect("/admin/posts/all");
+        });
+    } else {
+        // Error msg: invalid parameter
+        res.redirect("/admin/posts/all");
+    }
+});
+
+router.post("/edit", nullFormValidation, async (req, res) => {
+    if (isNaN(req.body.id))
+        req.body.errors.push({errorMsg: "Invalid parameter."});
+
+    try {
+        if (await Post.findOne({where: {slug: slugify(req.body.title.toLowerCase())}})) // REDO
+            req.body.errors.push({errorMsg: "There's already a post with this title."});
+    } catch(error) {
+        // Error msg: internal error, pls try again
+        console.log("An error ocurred while trying to get data from the database. Error: ");
+        console.log(error);
+    }
+    if (req.body.errors.length === 0) {
+        Post.update({
+            title: req.body.title,
+            description: req.body.description,
+            post: req.body.post,
+            slug: slugify(req.body.title.toLowerCase())
+        }, {
+            where: {
+                id: req.body.id,
+                slug: {[Op.notIn]: [req.body.prevSlug]}
+            }
+        }).then(() => {
+            // Success msg
+            res.redirect("/admin/posts/all");
+        }).catch(error => {
+            // Error msg: internal error, pls try again
+            console.log("An error ocurred while trying to get data from the database. Error: ");
+            console.log(error);
+        });
+    } else {
+        // Errors msg: [each error]
+        res.redirect(`/admin/posts/edit?post=${req.body.id}`);
+    }
+});
+
+router.get("/read", (req, res) => {
+    if (req.query["post"] && !isNaN(req.query["post"]) && !Array.isArray(req.query["post"])) {
+        Post.findOne({
+            include: [{model: Category}],
+            where: {
+                id: req.query["post"]
+            }
+        }).then(post => {
+            if (post)
+                res.render("admin/posts/read", {post: post, commentaries: [], dateFormatter: dateFormatter, hourFormatter: hourFormatter});
+            else {
+                // Error msg: post not found
+                res.redirect("/admin/posts/all");
+            }
         }).catch(error => {
             // Error msg: internal error, pls try again
             console.log("An error ocurred while trying to get data from the database. Error: ");
@@ -143,18 +263,6 @@ router.get("/delete", (req, res) => {
         // Error msg: invalid parameter
         res.redirect("/admin/posts/all");
     }
-});
-
-router.post("/delete", nullFormValidation, (req, res) => {
-    //
-});
-
-router.get("/edit", (req, res) => {
-    //
-});
-
-router.post("/edit", nullFormValidation, (req, res) => {
-    //
 });
 
 // Export

@@ -1,0 +1,40 @@
+<%- include("../../partials/header.ejs") %>
+<%- include("../../partials/navbar.ejs") %>
+
+<div class="card mt-4 mb-2">
+    <div class="card-header">
+        <div style="text-align: center;">
+            <h1 style="font-size: 65px;"><%= post.title %></h1>
+            <h2 style="color: darkGray; font-style: italic; font-size: 26px; font-weight: normal;"><%= post.description %></h2>
+        </div>
+        <hr>
+        <img src="/img/icons/category.svg" alt="Category icon"> <span>Category: <a href="/admin/posts/all?category=<%= post.categoryId %>"><%= post.category.category %></a></span> <br>
+        <img src="/img/icons/author.svg" alt="Author icon"> <span>Author: <a href="#"><%= post.author %></a></span> <br>
+        <img src="/img/icons/date.svg" alt="Date and hour icon"> <span>Created on <%= dateFormatter(post.createdAt) %> at <%= hourFormatter(post.createdAt) %><% if (post.createdAt.getTime() !== post.updatedAt.getTime()) { %> and last updated on <%= dateFormatter(post.updatedAt)%> at <%= hourFormatter(post.updatedAt) %><% } %></span>
+    </div>
+
+    <div class="card-body">
+        <%- post.post %>
+    </div>
+
+    <div class="card-footer">
+        <span>Login (later)</span>
+    </div>
+</div>
+<hr>
+<h2>Commentaries</h2>
+
+<% if (commentaries.length > 0) { %>
+    <% commentaries.forEach(commentary => { %>
+        <div class="card">
+            <div class="card-body">
+                <span>--- commentary here ---</span>
+            </div>
+        </div>
+    <% }); %>
+<% } else { %>
+    <h3 style="color: gray; font-size: 18px;">There's no commentaries to show.</h3>
+<% } %>
+
+<a href="/admin/posts/all" class="btn btn-outline-secondary mt-4 mb-2">Back to all posts</a>
+<%- include("../../partials/footer.ejs") %>

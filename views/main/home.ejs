@@ -2,7 +2,7 @@
 <%- include("../partials/navbar.ejs") %>
 
 <% if (true) { %>
-    <div class="jumbotron mt-4">
+    <div class="jumbotron mt-4 no-indent">
         <h1 class="display-4">Welcome!</h1>
         <p class="lead">This is a blog made by Nathan Murillo.</p>
         <hr class="my-4">
@@ -23,12 +23,13 @@
             </div>
             
             <div class="card-body">
-                <span>Category: </span><a href="/posts/all?category=<%= post.categoryId %>"><%= post.category.category %></a> <hr>
+                <img src="/img/icons/category.svg" alt="Category icon"> <span>Category: </span><a href="/posts/all?category=<%= post.categoryId %>"><%= post.category.category %></a> <hr>
                 <a href="/read/<%= post.slug %>" class="btn btn-outline-primary">Read post</a>
             </div>
 
             <div class="card-footer">
                 <small>
+                    <img src="/img/icons/date-gray.svg" alt="Date and hour icon"> 
                     <% if (post.createdAt.getTime() === post.updatedAt.getTime()) { %>
                         Created on <%= dateFormatter(post.createdAt) %> at <%= hourFormatter(post.createdAt) %>
                     <% } else { %>

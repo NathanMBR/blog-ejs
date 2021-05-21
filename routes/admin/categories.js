@@ -68,8 +68,8 @@ router.get("/delete", (req, res) => {
     }
 });
 
-router.post("/delete", (req, res) => {
-    if (req.body.id && !isNaN(req.body.id)) {
+router.post("/delete", nullFormValidation, (req, res) => {
+    if (!isNaN(req.body.id) && req.body.errors.length === 0) {
         Category.destroy({
             where: {
                 id: req.body.id
@@ -111,7 +111,7 @@ router.get("/edit", (req, res) => {
 });
 
 router.post("/edit", nullFormValidation, (req, res) => {
-    if (req.body.id && !isNaN(req.body.id) && req.body.errors.length === 0) {
+    if (!isNaN(req.body.id) && req.body.errors.length === 0) {
         Category.update({
             category: req.body.category
         }, {

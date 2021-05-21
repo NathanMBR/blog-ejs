@@ -18,13 +18,16 @@
             </div>
 
             <div class="card-body">
-                <span>Category: <%= post.category.category %></span> <br>
-                <span>Author: <%= post.author %></span> <br>
-                <a href="/admin/posts/read?post=<%= post.slug %>" class="btn btn-outline-primary mt-2">See more</a>
+                <img src="/img/icons/category.svg" alt="Category icon"> <span>Category: <a href="/admin/posts/all?=<%= post.categoryId %>"><%= post.category.category %></a></span> <br>
+                <img src="/img/icons/author.svg" alt="Author icon"> <span>Author: <%= post.author %></span> <br>
+                <a href="/admin/posts/read?post=<%= post.id %>" class="btn btn-outline-primary mt-2">See more</a>
+                <a href="/admin/posts/edit?post=<%= post.id %>" class="btn btn-outline-warning mt-2">Edit</a>
+                <a href="/admin/posts/delete?post=<%= post.id %>" class="btn btn-outline-danger mt-2">Delete</a>
             </div>
 
             <div class="card-footer">
                 <small>
+                    <img src="/img/icons/date-gray.svg" alt="Date and hour icon"> 
                     <% if (post.createdAt.getTime() === post.updatedAt.getTime()) { %>
                         Created on <%= dateFormatter(post.createdAt) %> at <%= hourFormatter(post.createdAt) %>
                     <% } else { %>

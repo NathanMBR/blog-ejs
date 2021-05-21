@@ -33,9 +33,29 @@ router.get("/404", (req, res) => {
 });
 
 router.get("/read", (req, res) => {
+    res.redirect("/home");
+});
+
+router.get("/read/:slug", (req, res) => {
     Post.findOne({
-        include
-    })
+        include: [
+            {model: Category}
+        ], where: {
+            slug: req.params["slug"]
+        }
+    }).then(post => {
+        if (post)
+            res.render("main/read", {post: post, commentaries: [], dateFormatter: dateFormatter, hourFormatter: hourFormatter});
+        else {
+            // Error msg: post not found
+            res.redirect("/home");
+        }
+    }).catch(error => {
+        // Error msg: internal error, pls try again
+        console.log("An error ocurred while trying to get data from the database. Error: ");
+        console.log(error);
+        res.redirect("/home");
+    });
 });
 
 // Export
