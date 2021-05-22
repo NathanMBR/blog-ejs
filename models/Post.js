@@ -27,6 +27,11 @@ const Post = connection.define("posts", {
         type: Sequelize.BOOLEAN,
         defaultValue: false
     }
+}, {
+    indexes: [{
+        unique: true,
+        fields: ["title", "slug"]
+    }]
 });
 
 Post.belongsTo(Category);   // 1 to 1

@@ -17,8 +17,10 @@
   },
   "homepage": "https://github.com/NathanMBR/blog-ejs#readme",
   "dependencies": {
+    "connect-flash": "^0.1.1",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
+    "express-session": "^1.17.2",
     "mysql2": "^2.2.5",
     "sequelize": "^6.6.2",
     "slugify": "^1.5.3"

@@ -15,11 +15,16 @@ router.get("/", (req, res) => {
 });
 
 router.get("/all", (req, res) => {
-    Category.findAll({order: [["category", "ASC"]]}).then(categories => {
+    Category.findAll({
+        where: {
+            deleted: false
+        },
+        order: [["category", "ASC"]]
+    }).then(categories => {
         res.render("admin/categories/all", {categories: categories, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
     }).catch(error => {
-        // Error msg: internal error, pls try again
-        console.log("An error ocurred while trying to get data from the database. Error:");
+        req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+        console.log("An error occurred while trying to get data from the database. Error:");
         console.log(error);
         res.redirect("/admin/panel");
     });
@@ -35,15 +40,15 @@ router.post("/new", nullFormValidation, (req, res) => {
             category: req.body.category,
             author: "System Admin"
         }).then(() => {
-            // Success msg: successfully created
+            req.flash("successMsg", "The category was successfully created!");
             res.redirect("/admin/categories/all");
         }).catch(error => {
-            // Error msg: internal error, pls try again
-            console.log("An error ocurred while trying to save data in the database. Error: ");
+            req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+            console.log("An error occurred while trying to save data in the database. Error: ");
             console.log(error);
         });
     } else {
-        // Error msgs: [each error]
+        req.flash("errorMsg", req.body.errors);
         res.redirect("/admin/categories/new");
     }
 });
@@ -54,37 +59,39 @@ router.get("/delete", (req, res) => {
             if (category)
                 res.render("admin/categories/delete", {category: category, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
             else {
-                // Error msg: category not found
+                req.flash("errorMsg", "Category not found.");
                 res.redirect("/admin/categories/all");                
             }
         }).catch(error => {
-            // Error msg: internal error, pls try again
-            console.log("An error ocurred while trying to get data from the database. Error:");
+            req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+            console.log("An error occurred while trying to get data from the database. Error:");
             console.log(error);
         });
     } else {
-        // Error msg: invalid parameter
+        req.flash("errorMsg", "Invalid parameter.");
         res.redirect("/admin/categories/all");
     }
 });
 
 router.post("/delete", nullFormValidation, (req, res) => {
     if (!isNaN(req.body.id) && req.body.errors.length === 0) {
-        Category.destroy({
+        Category.update({
+            deleted: true
+        }, {
             where: {
                 id: req.body.id
             }
         }).then(() => {
-            // Success msg: successfully deleted
+            req.flash("successMsg", "The category was successfully deleted!");
             res.redirect("/admin/categories/all");
         }).catch(error => {
-            // Error msg: internal error, pls try again
-            console.log("An error ocurred while trying to delete data from the database. Error:");
+            req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+            console.log("An error occurred while trying to delete data from the database. Error:");
             console.log(error);
             res.redirect("/admin/categories/all");
         })
     } else {
-        // Error msg: invalid parameter
+        req.flash("errorMsg", "Invalid ID.");
         res.redirect("/admin/categories/all");
     }
 });
@@ -95,17 +102,17 @@ router.get("/edit", (req, res) => {
             if (category)
                 res.render("admin/categories/edit", {category: category, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
             else {
-                // Error msg: category not found
+                req.flash("errorMsg", "Category not found.");
                 res.redirect("/admin/categories/all");
             }
         }).catch(error => {
-            // Error msg: internal error, pls try again
-            console.log("An error ocurred while trying to get data from the database. Error:");
+            req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+            console.log("An error occurred while trying to get data from the database. Error:");
             console.log(error);
             res.redirect("/admin/categories/all");
         });
     } else {
-        // Error msg: invalid parameter
+        req.flash("errorMsg", "Invalid parameter.");
         res.redirect("/admin/categories/all");
     }
 });
@@ -119,16 +126,16 @@ router.post("/edit", nullFormValidation, (req, res) => {
                 id: req.body.id
             }
         }).then(() => {
-            // Success msg: successfully edited
+            req.flash("successMsg", "The category was successfully edited!");
             res.redirect("/admin/categories/all");
         }).catch(error => {
-            // Error msg: internal error, pls try again
-            console.log("An error ocurred while trying to update data from the database. Error: ");
+            req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+            console.log("An error occurred while trying to update data from the database. Error: ");
             console.log(error);
             res.redirect("/admin/categories/all");
         })
     } else {
-        // Error msg: invalid parameter
+        req.flash("errorMsg", "Invalid ID.");
         res.redirect(`/admin/categories/edit?category=${req.body.id}`);
     }
 });

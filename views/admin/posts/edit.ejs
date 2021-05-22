@@ -1,5 +1,6 @@
 <%- include("../../partials/header.ejs") %>
 <%- include("../../partials/navbar.ejs") %>
+<%- include("../../partials/flash.ejs") %>
 
 <h1 class="mt-4">Edit post</h1>
 <hr>
@@ -14,11 +15,11 @@
 
             <label for="category">Category:</label>
             <select name="category" class="form-control" required>
-                <option value="0">Select a category</option>
+                <option value="0">Select a category...</option>
 
                 <% if (categories.length > 0) { %>
                     <% categories.forEach(category => { %>
-                        <option value="<%= category.id %>"><%= category.category %></option>
+                        <option value="<%= category.id %>"<% if (category.id === post.categoryId) { %> selected<% } %>><%= category.category %></option>
                     <% }); %>
                 <% } else { %>
                     <option value="0">No categories available.</option>
@@ -28,13 +29,12 @@
             <label for="post">Post:</label>
             <textarea name="post" id="post" class="form-control" placeholder="Your post here..."><%= post.post %></textarea>
 
-            <input type="hidden" name="prevSlug" value="<%= post.slug %>">
             <input type="hidden" name="id" value="<%= post.id %>">
         </div>
     </div>
     <button type="submit" class="btn btn-outline-success mt-2">Edit post</button>
 </form>
-<a href="/admin/posts/all" class="btn btn-outline-secondary mt-2">Back</a>
+<a href="/admin/posts/all" class="btn btn-outline-secondary mt-2 mb-2">Back</a>
 
 <script src="/tinymce/tinymce.min.js"></script>
 <script>

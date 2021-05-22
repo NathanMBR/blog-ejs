@@ -1,0 +1,29 @@
+<% if (successMsg.length === 1) { %>
+    <div class="alert alert-success mt-2"><%= successMsg %></div>
+<% } else { %>
+    <% successMsg.forEach(msg => { %>
+        <div class="alert alert-success mt-2">
+            <span><%= msg.successMsg %></span>
+        </div>
+    <% }); %>
+<% } %>
+
+<% if (warningMsg.length === 1 && typeof(errorMsg) === "string") { %>
+    <div class="alert alert-warning mt-2"><%= warningMsg %></div>
+<% } else { %>
+    <% warningMsg.forEach(msg => { %>
+        <div class="alert alert-warning mt-2">
+            <span><%= msg.warningMsg %></span>
+        </div>
+    <% }); %>
+<% } %>
+
+<% if (errorMsg.length === 1 && typeof(errorMsg) === "string") { %>
+    <div class="alert alert-danger mt-2"><%= errorMsg %></div>
+<% } else { %>
+    <% errorMsg.forEach(msg => { %>
+        <div class="alert alert-danger mt-2">
+            <span><%= msg.errorMsg %></span>
+        </div>
+    <% }); %>
+<% } %>

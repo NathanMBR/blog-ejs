@@ -1,5 +1,6 @@
 // Modules
 const router = require("express").Router();
+const Sequelize = require("sequelize");
 const slugify = require("slugify");
 
 // Models
@@ -18,7 +19,6 @@ router.get("/", (req, res) => {
 
 router.get("/all", async (req, res) => {
     const categoryId = req.query["category"];
-    console.log("\n\nCategory ID: " + categoryId);
     let category = null;
     let order = "DESC";
     const queryObject = {
@@ -33,10 +33,9 @@ router.get("/all", async (req, res) => {
         if (!isNaN(categoryId) && !Array.isArray(categoryId)) {
             try {
                 category = await Category.findByPk(categoryId);
-                console.log("Category found: " + category);
             } catch(error) {
-                // Error msg: internal error, pls try again
-                console.log("An error ocurred while trying to access data from the database. Error: ");
+                req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+                console.log("An error occurred while trying to access data from the database. Error: ");
                 console.log(error);
                 res.redirect("/admin/posts/all");
             }
@@ -44,11 +43,11 @@ router.get("/all", async (req, res) => {
             if (category)
                 queryObject.where.categoryId = categoryId;
             else {
-                // Error msg: category not found
+                req.flash("errorMsg", "Category not found.");
                 res.redirect("/admin/posts/all");
             }
         } else {
-            // Error msg: invalid parameter
+            req.flash("errorMsg", "Invalid parameter.");
             res.redirect("/admin/posts/all");
         }
     }
@@ -62,41 +61,52 @@ router.get("/all", async (req, res) => {
     Post.findAll(queryObject).then(posts => {
         res.render("admin/posts/all", {posts: posts, category: category, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
     }).catch(error => {
-        // Error msg: internal error, pls try again
-        console.log("An error ocurred while trying to get data from the database. Error: ");
+        req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+        console.log("An error occurred while trying to get data from the database. Error: ");
         console.log(error);
         res.redirect("/admin/posts/all");
     });
 });
 
 router.get("/new", (req, res) => {
-    Category.findAll({order: [["category", "ASC"]]}).then(categories => {
+    Category.findAll({
+        where: {
+            deleted: false
+        },
+        order: [
+            ["category", "ASC"]
+        ]
+    }).then(categories => {
         if (categories.length > 0)
             res.render("admin/posts/new", {categories: categories});
         else {
-            // Error msg: no categories created
+            req.flash("errorMsg", "There isn't any categories created. Please create a category to access the post creation page.");
             res.redirect("/admin/categories/new");
         }
     }).catch(error => {
-        console.log("An error ocurred while trying to load data from the database. Error: ");
+        req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+        console.log("An error occurred while trying to load data from the database. Error: ");
         console.log(error);
         res.redirect("/admin/posts/all");
     });
 });
 
-router.post("/new", nullFormValidation, (req, res) => {
+router.post("/new", nullFormValidation, async (req, res) => {
     // Duplicate slug validation
-    Post.findOne({where: {
+    await Post.findOne({where: {
         slug: slugify(req.body.title.toLowerCase())
     }}).then(post => {
         if (post)
-            req.body.errors.push({errorMsg: `There's already a post with this title.`});
+            req.body.errors.push({errorMsg: "There's already a post with this title."});
     }).catch(error => {
-        // Error msg: internal error, pls try again
-        console.log("An error ocurred while trying to get data from the database. Error: ");
+        req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+        console.log("An error occurred while trying to get data from the database. Error: ");
         console.log(error);
         res.redirect("/admin/posts/all");
     });
+
+    if (req.body.category <= 0)
+        req.body.errors.push({errorMsg: "Please, choose a category."});
 
     if (req.body.errors.length === 0) {
         if (req.body.category !== 0) {
@@ -108,20 +118,20 @@ router.post("/new", nullFormValidation, (req, res) => {
                 author: "System Admin",
                 slug: slugify(req.body.title.toLowerCase())
             }).then(() => {
-                // Success msg: successfully created
+                req.flash("successMsg", "The post was successfully created!");
                 res.redirect("/admin/posts/all");
             }).catch(error => {
-                // Error msg: internal error, pls try again
-                console.log("An error ocurred while trying to save data in the database. Error: ");
+                req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+                console.log("An error occurred while trying to save data in the database. Error: ");
                 console.log(error);
                 res.redirect("/admin/posts/all");
             });
         } else {
-            // Error msg: no categories created
+            req.flash("errorMsg", "There isn't any categories created. Please create a category to access the post creation page.");
             res.redirect("/admin/categories/new");
         }
     } else {
-        // Error msgs: [each error]
+        req.flash("errorMsg", req.body.errors);
         res.redirect("/admin/posts/new");
     }
 });
@@ -130,19 +140,19 @@ router.get("/delete", (req, res) => {
     if (req.query["post"] && !isNaN(req.query["post"]) && !Array.isArray(req.query["post"])) {
         Post.findByPk(req.query["post"]).then(post => {
             if (post)
-                res.render("admin/posts/delete", {post: post});
+                res.render("admin/posts/delete", {post: post, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
             else {
-                // Error msg: post not found
+                req.flash("errorMsg", "Post not found.");
                 res.redirect("/admin/posts/all");
             }
         }).catch(error => {
-            // Error msg: internal error, pls try again
-            console.log("An error ocurred while trying to get data from the database. Error: ");
+            req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+            console.log("An error occurred while trying to get data from the database. Error: ");
             console.log(error);
             res.redirect("/admin/posts/all");
         });
     } else {
-        // Error msg: invalid parameter
+        req.flash("errorMsg", "Invalid parameter.");
         res.redirect("/admin/posts/all");
     }
 });
@@ -156,88 +166,101 @@ router.post("/delete", nullFormValidation, (req, res) => {
                 id: req.body.id
             }
         }).then(() => {
-            // Success msg: successfully deleted
+            req.flash("successMsg", "The post was successfully deleted!");
             res.redirect("/admin/posts/all");
         }).catch(error => {
-            // Error msg: internal error, pls try again
-            console.log("An error ocurred while trying to update data from the database. Error: ");
+            req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+            console.log("An error occurred while trying to update data from the database. Error: ");
             console.log(error);
             res.redirect("/admin/posts/all");
         });
     } else {
-        // Error msg: invalid parameter
+        req.flash("errorMsg", "Invalid ID.");
         res.redirect("/admin/posts/all");
     }
 });
 
 router.get("/edit", (req, res) => {
     if (req.query["post"] && !isNaN(req.query["post"]) && !Array.isArray(req.query["post"])) {
-        Category.findAll().then(categories => {
+        Category.findAll({
+            where: {
+                deleted: false
+            }
+        }).then(categories => {
             if (categories.length > 0) {
                 Post.findByPk(req.query["post"]).then(post => {
                     if (post)
                         res.render("admin/posts/edit", {post: post, categories: categories, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
                     else {
-                        // Error msg: post not found
+                        req.flash("errorMsg", "Post not found.");
                         res.redirect("/admin/posts/all");
                     }
                 }).catch(error => {
-                    // Error msg: internal error, pls try again
-                    console.log("An error ocurred while trying to get data from the database. Error: ");
+                    req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+                    console.log("An error occurred while trying to get data from the database. Error: ");
                     console.log(error);
                     res.redirect("/admin/posts/all");
                 });
             } else {
-                // Error msg: no categories found, pls create one
+                req.flash("errorMsg", "There isn't any categories created. Please create a category to access the post edition page.");
                 res.redirect("/admin/categories/new");
             }
         }).catch(error => {
-            // Errro msg: internal error, pls try again
-            console.log("An error ocurred while trying to get data from the database. Error: ");
+            req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+            console.log("An error occurred while trying to get data from the database. Error: ");
             console.log(error);
             res.redirect("/admin/posts/all");
         });
     } else {
-        // Error msg: invalid parameter
+        req.flash("errorMsg", "Invalid parameter.");
         res.redirect("/admin/posts/all");
     }
 });
 
-router.post("/edit", nullFormValidation, async (req, res) => {
+router.post("/edit", nullFormValidation, (req, res) => {
     if (isNaN(req.body.id))
         req.body.errors.push({errorMsg: "Invalid parameter."});
 
-    try {
-        if (await Post.findOne({where: {slug: slugify(req.body.title.toLowerCase())}})) // REDO
+    if (req.body.category <= 0)
+        req.body.errors.push({errorMsg: "Please choose a category."});
+    Post.findOne({
+        where: {
+            slug: slugify(req.body.title.toLowerCase()),
+            id: {[Sequelize.Op.notIn]: [req.body.id]},
+            deleted: false
+        }
+    }).then(post => {
+        if (post)
             req.body.errors.push({errorMsg: "There's already a post with this title."});
-    } catch(error) {
-        // Error msg: internal error, pls try again
-        console.log("An error ocurred while trying to get data from the database. Error: ");
+
+        if (req.body.errors.length === 0) {
+            Post.update({
+                title: req.body.title,
+                description: req.body.description,
+                post: req.body.post,
+                slug: slugify(req.body.title.toLowerCase())
+            }, {
+                where: {
+                    id: req.body.id
+                }
+            }).then(() => {
+                req.flash("successMsg", "The post was successfully edited!");
+                res.redirect("/admin/posts/all");
+            }).catch(error => {
+                req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+                console.log("An error occurred while trying to get data from the database. Error: ");
+                console.log(error);
+            });
+        } else {
+            req.flash("errorMsg", req.body.errors);
+            res.redirect(`/admin/posts/edit?post=${req.body.id}`);
+        }
+    }).catch(error => {
+        req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+        console.log("An error occurred while trying to get data from the database. Error: ");
         console.log(error);
-    }
-    if (req.body.errors.length === 0) {
-        Post.update({
-            title: req.body.title,
-            description: req.body.description,
-            post: req.body.post,
-            slug: slugify(req.body.title.toLowerCase())
-        }, {
-            where: {
-                id: req.body.id,
-                slug: {[Op.notIn]: [req.body.prevSlug]}
-            }
-        }).then(() => {
-            // Success msg
-            res.redirect("/admin/posts/all");
-        }).catch(error => {
-            // Error msg: internal error, pls try again
-            console.log("An error ocurred while trying to get data from the database. Error: ");
-            console.log(error);
-        });
-    } else {
-        // Errors msg: [each error]
-        res.redirect(`/admin/posts/edit?post=${req.body.id}`);
-    }
+        res.redirect
+    });
 });
 
 router.get("/read", (req, res) => {
@@ -245,22 +268,23 @@ router.get("/read", (req, res) => {
         Post.findOne({
             include: [{model: Category}],
             where: {
-                id: req.query["post"]
+                id: req.query["post"],
+                deleted: false
             }
         }).then(post => {
             if (post)
                 res.render("admin/posts/read", {post: post, commentaries: [], dateFormatter: dateFormatter, hourFormatter: hourFormatter});
             else {
-                // Error msg: post not found
+                req.flash("errorMsg", "Post not found.");
                 res.redirect("/admin/posts/all");
             }
         }).catch(error => {
-            // Error msg: internal error, pls try again
-            console.log("An error ocurred while trying to get data from the database. Error: ");
+            req.flash("errorMsg", "An internal error has occurred. Please, try again.");
+            console.log("An error occurred while trying to get data from the database. Error: ");
             console.log(error);
         });
     } else {
-        // Error msg: invalid parameter
+        req.flash("errorMsg", "Invalid parameter.");
         res.redirect("/admin/posts/all");
     }
 });

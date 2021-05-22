@@ -16,7 +16,7 @@ router.get("/panel", (req, res) => {
 });
 
 router.get("/panel/configurations", (req, res) => {
-    res.send('<span>Não era pra tu ter clicado aqui D: <a href="/admin/panel">Por favor volta</a></span>');
+    res.send('<span style="font-family: sans-serif;">Não era pra tu ter clicado aqui D: <a href="/admin/panel">Por favor volta</a></span>');
 });
 
 router.use("/categories", adminRoutes.categories);

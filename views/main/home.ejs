@@ -1,7 +1,8 @@
 <%- include("../partials/header.ejs") %>
 <%- include("../partials/navbar.ejs") %>
+<%- include("../partials/flash.ejs") %>
 
-<% if (true) { %>
+<% if (true && offset === 0) { %>
     <div class="jumbotron mt-4 no-indent">
         <h1 class="display-4">Welcome!</h1>
         <p class="lead">This is a blog made by Nathan Murillo.</p>
@@ -23,7 +24,9 @@
             </div>
             
             <div class="card-body">
-                <img src="/img/icons/category.svg" alt="Category icon"> <span>Category: </span><a href="/posts/all?category=<%= post.categoryId %>"><%= post.category.category %></a> <hr>
+                <img src="/img/icons/category.svg" alt="Category icon"> <span>Category: </span><a href="/posts/all?category=<%= post.categoryId %>"><%= post.category.category %></a> <br>
+                <img src="/img/icons/author.svg" alt="Author icon"> <span>Author: </span><a href="#"><%= post.author %></a>
+                <hr>
                 <a href="/read/<%= post.slug %>" class="btn btn-outline-primary">Read post</a>
             </div>
 

@@ -15,11 +15,30 @@ router.get("/", (req, res) => {
 });
 
 router.get("/home", (req, res) => {
-    Post.findAll({
+    let hasNextPage;
+    let page = req.query["page"];
+    if (!page || isNaN(page) || Array.isArray(page) || page <= 0)
+        page = 1;
+
+    const limit = 5;
+    const offset = page => {
+        return limit * (page - 1);
+    }
+    
+    Post.findAndCountAll({
+        where: {
+            deleted: false
+        },
         include: [{model: Category}],
-        order: [["createdAt", "DESC"]]
+        order: [["createdAt", "DESC"]],
+        limit: limit,
+        offset: offset(page)
     }).then(posts => {
-        res.render("main/home", {posts: posts, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
+        if (offset(page) + limit >= posts.count)
+            hasNextPage = false;
+        else
+            hasNextPage = true;
+        res.render("main/home", {posts: posts.rows, offset: offset(page), hasNextPage: hasNextPage, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
     }).catch(error => {
         // Error msg: internal error, pls try again
         console.log("An error ocurred while trying to get data from the database. Error: ");
