@@ -1,29 +1,53 @@
-<% if (successMsg.length === 1) { %>
-    <div class="alert alert-success mt-2"><%= successMsg %></div>
-<% } else { %>
-    <% successMsg.forEach(msg => { %>
-        <div class="alert alert-success mt-2">
-            <span><%= msg.successMsg %></span>
+<% if (successMsg && successMsg.length > 0) { %>
+    <% if (typeof(successMsg) === "string") { %>
+        <div class="alert alert-success mt-2 mb-2">
+            <span>
+                <%= successMsg %>
+            </span>
         </div>
-    <% }); %>
+    <% } else if (Array.isArray(successMsg)) { %>
+        <% successMsg.forEach(msg => { %>
+            <div class="alert alert-success mt-2 mb-2">
+                <span>
+                    <%= msg %>
+                </span>
+            </div>
+        <% }); %>
+    <% } %>
 <% } %>
 
-<% if (warningMsg.length === 1 && typeof(errorMsg) === "string") { %>
-    <div class="alert alert-warning mt-2"><%= warningMsg %></div>
-<% } else { %>
-    <% warningMsg.forEach(msg => { %>
-        <div class="alert alert-warning mt-2">
-            <span><%= msg.warningMsg %></span>
+<% if (warningMsg && warningMsg.length > 0) { %>
+    <% if (typeof(warningMsg) === "string") { %>
+        <div class="alert alert-warning mt-2 mb-2">
+            <span>
+                <%= warningMsg %>
+            </span>
         </div>
-    <% }); %>
+    <% } else if (Array.isArray(warningMsg)) { %>
+        <% warningMsg.forEach(msg => { %>
+            <div class="alert alert-warning mt-2 mb-2">
+                <span>
+                    <%= msg %>
+                </span>
+            </div>
+        <% }); %>
+    <% } %>
 <% } %>
 
-<% if (errorMsg.length === 1 && typeof(errorMsg) === "string") { %>
-    <div class="alert alert-danger mt-2"><%= errorMsg %></div>
-<% } else { %>
-    <% errorMsg.forEach(msg => { %>
-        <div class="alert alert-danger mt-2">
-            <span><%= msg.errorMsg %></span>
+<% if (errorMsg && errorMsg.length > 0) { %>
+    <% if (typeof(errorMsg) === "string") { %>
+        <div class="alert alert-danger mt-2 mb-2">
+            <span>
+                <%= errorMsg %>
+            </span>
         </div>
-    <% }); %>
+    <% } else if (Array.isArray(errorMsg)) { %>
+        <% errorMsg.forEach(msg => { %>
+            <div class="alert alert-danger mt-2 mb-2">
+                <span>
+                    <%= msg %>
+                </span>
+            </div>
+        <% }); %>
+    <% } %>
 <% } %>

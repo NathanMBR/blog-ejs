@@ -4,7 +4,7 @@ const nullFormValidation = (req, res, next) => {
     // Anti undefined/null/0 validation
     Object.keys(req.body).forEach(key => {
         if (!req.body[key])
-            errors.push({errorMsg: `The category ${key} can't be empty.`});
+            errors.push(`The category ${key} can't be empty.`);
     });
 
     req.body.errors = errors;

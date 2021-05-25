@@ -97,7 +97,7 @@ router.post("/new", nullFormValidation, async (req, res) => {
         slug: slugify(req.body.title.toLowerCase())
     }}).then(post => {
         if (post)
-            req.body.errors.push({errorMsg: "There's already a post with this title."});
+            req.body.errors.push("There's already a post with this title.");
     }).catch(error => {
         req.flash("errorMsg", "An internal error has occurred. Please, try again.");
         console.log("An error occurred while trying to get data from the database. Error: ");
@@ -106,7 +106,7 @@ router.post("/new", nullFormValidation, async (req, res) => {
     });
 
     if (req.body.category <= 0)
-        req.body.errors.push({errorMsg: "Please, choose a category."});
+        req.body.errors.push("Please, choose a category.");
 
     if (req.body.errors.length === 0) {
         if (req.body.category !== 0) {
@@ -219,10 +219,10 @@ router.get("/edit", (req, res) => {
 
 router.post("/edit", nullFormValidation, (req, res) => {
     if (isNaN(req.body.id))
-        req.body.errors.push({errorMsg: "Invalid parameter."});
+        req.body.errors.push("Invalid parameter.");
 
     if (req.body.category <= 0)
-        req.body.errors.push({errorMsg: "Please choose a category."});
+        req.body.errors.push("Please choose a category.");
     Post.findOne({
         where: {
             slug: slugify(req.body.title.toLowerCase()),
@@ -231,7 +231,7 @@ router.post("/edit", nullFormValidation, (req, res) => {
         }
     }).then(post => {
         if (post)
-            req.body.errors.push({errorMsg: "There's already a post with this title."});
+            req.body.errors.push("There's already a post with this title.");
 
         if (req.body.errors.length === 0) {
             Post.update({
