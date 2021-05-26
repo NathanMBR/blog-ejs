@@ -19,7 +19,8 @@ router.get("/home", (req, res) => {
     let page = req.query["page"];
     if (!page || isNaN(page) || Array.isArray(page) || page <= 0)
         page = 1;
-
+    else
+        console.log("\n\n\n" + typeof(page));
     const limit = 5;
     const offset = page => {
         return limit * (page - 1);
@@ -34,21 +35,16 @@ router.get("/home", (req, res) => {
         limit: limit,
         offset: offset(page)
     }).then(posts => {
-        if (offset(page) + limit >= posts.count)
-            hasNextPage = false;
-        else
+        offset(page) + limit >= posts.count ?
+            hasNextPage = false :
             hasNextPage = true;
-        res.render("main/home", {posts: posts.rows, offset: offset(page), hasNextPage: hasNextPage, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
+        res.render("main/home", {posts: posts.rows, page: page, hasNextPage: hasNextPage, dateFormatter: dateFormatter, hourFormatter: hourFormatter});
     }).catch(error => {
         // Error msg: internal error, pls try again
         console.log("An error ocurred while trying to get data from the database. Error: ");
         console.log(error);
         res.redirect("/404");
     });
-});
-
-router.get("/404", (req, res) => {
-    res.render("main/404");
 });
 
 router.get("/read", (req, res) => {
@@ -75,6 +71,10 @@ router.get("/read/:slug", (req, res) => {
         console.log(error);
         res.redirect("/home");
     });
+});
+
+router.all("/*", (req, res) => {
+    res.status(404).render("main/404");
 });
 
 // Export

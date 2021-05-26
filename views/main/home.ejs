@@ -2,7 +2,7 @@
 <%- include("../partials/navbar.ejs") %>
 <%- include("../partials/flash.ejs") %>
 
-<% if (true && offset === 0) { %>
+<% if (true && page == 1) { %>
     <div class="jumbotron mt-4 no-indent">
         <h1 class="display-4">Welcome!</h1>
         <p class="lead">This is a blog made by Nathan Murillo.</p>
@@ -44,6 +44,18 @@
     <% }); %>
 <% } else { %>
     <small style="font-size: 20px;">There's no posts to be shown.</small>
+<% } %>
+
+<% if (page > 1) { %>
+    <a href="/home?page=<%= parseInt(page) - 1 %>" class="btn btn-outline-primary mt-4 mb-2">
+        &#8920; Previous page
+    </a>
+<% } %>
+
+<% if (hasNextPage) { %>
+    <a href="/home?page=<%= parseInt(page) + 1 %>" class="btn btn-outline-primary mt-4 mb-2" style="float: right;">
+        Next page &#8921;
+    </a>
 <% } %>
 
 <%- include("../partials/footer.ejs") %>
