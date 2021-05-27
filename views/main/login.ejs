@@ -1,0 +1,21 @@
+<%- include("../partials/header.ejs") %>
+<%- include("../partials/navbar.ejs") %>
+<%- include("../partials/flash.ejs") %>
+
+<h1 class="mt-4">Login</h1>
+<hr>
+<form action="/login" method="POST">
+    <div class="card">
+        <div class="card-body">
+            <label for="email">E-mail:</label>
+            <input type="email" name="email" class="form-control" placeholder="E-mail" required>
+
+            <label for="password">Password:</label>
+            <input type="password" name="password" class="form-control" placeholder="Password" required>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-outline-success mt-4">Login</button>
+</form>
+<a href="/home" class="btn btn-outline-secondary mt-2 mb-2">Back</a>
+
+<%- include("../partials/footer.ejs") %>

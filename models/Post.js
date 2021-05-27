@@ -7,22 +7,27 @@ const Post = connection.define("posts", {
         type: Sequelize.STRING,
         allowNull: false
     },
+
     description: {
         type: Sequelize.TEXT,
         allowNull: false
     },
+
     post: {
         type: Sequelize.TEXT,
         allowNull: false
     },
+
     author: {
         type: Sequelize.STRING,
         allowNull: false
     },
+
     slug: {
         type: Sequelize.STRING,
         allowNull: false
     },
+    
     deleted: {
         type: Sequelize.BOOLEAN,
         defaultValue: false

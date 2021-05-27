@@ -8,16 +8,24 @@ const flash = require("connect-flash");
 const config = require("./configs/config");
 const connection = require("./db/connection");
 const flashMsg = require("./helpers/flashMsg");
-//const error404 = require("./helpers/error404");
+const isLogged = require("./middlewares/isLogged");
+const isAdmin = require("./middlewares/isAdmin");
 
 // Configs
 app.set("view engine", "ejs");
 
 app.use(session({
     secret: "notSoSecret",
+    cookie: {
+        maxAge: 2592000000
+    },
     resave: true,
     saveUninitialized: true
 }));
+app.use((req, res, next) => {
+    res.locals.user = req.session.user;
+    next();
+});
 app.use(flash());
 app.use(flashMsg);
 
@@ -25,8 +33,6 @@ app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 
 app.use(express.static("public"));
-
-//app.use(error404);
 
 connection.authenticate().then(() => {
     console.log("Successfully connected to the database.");
@@ -38,11 +44,17 @@ connection.authenticate().then(() => {
 // Routes
 const routes = {
     main: require("./routes/main"),
-    admin: require("./routes/admin")
+    admin: require("./routes/admin"),
+    user: require("./routes/user")
 };
 
 app.use("/", routes.main);
-app.use("/admin", routes.admin);
+app.use("/admin", isLogged, isAdmin, routes.admin);
+app.use("/user", routes.user);
+
+app.all("/*", (req, res) => {
+    res.status(404).render("main/404");
+});
 
 // Listening
 app.listen(config.PORT, () => {

@@ -19,7 +19,7 @@
             </div>
 
             <div class="card-body">
-                <img src="/img/icons/category.svg" alt="Category icon"> <span>Category: <a href="/admin/posts/all?=<%= post.categoryId %>"><%= post.category.category %></a></span> <br>
+                <img src="/img/icons/category.svg" alt="Category icon"> <span>Category: <a href="/admin/posts/all?category=<%= post.categoryId %>"><%= post.category.category %></a></span> <br>
                 <img src="/img/icons/author.svg" alt="Author icon"> <span>Author: <%= post.author %></span> <br>
                 <a href="/admin/posts/read?post=<%= post.id %>" class="btn btn-outline-primary mt-2">See more</a>
                 <a href="/admin/posts/edit?post=<%= post.id %>" class="btn btn-outline-warning mt-2">Edit</a>

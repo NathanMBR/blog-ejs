@@ -8,9 +8,11 @@ const Post = require("../../models/Post");
 const Category = require("../../models/Category");
 
 // Helpers
-const nullFormValidation = require("../../helpers/nullFormValidation");
 const dateFormatter = require("../../helpers/dateFormatter");
 const hourFormatter = require("../../helpers/hourFormatter");
+
+// Middlewares
+const nullFormValidation = require("../../middlewares/nullFormValidation");
 
 // Routes
 router.get("/", (req, res) => {

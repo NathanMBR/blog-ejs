@@ -6,10 +6,12 @@ const Category = connection.define("categories", {
         type: Sequelize.STRING,
         allowNull: false
     },
+
     author: {
         type: Sequelize.STRING,
         allowNull: false
     },
+    
     deleted: {
         type: Sequelize.BOOLEAN,
         defaultValue: false

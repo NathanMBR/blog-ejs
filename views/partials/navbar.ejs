@@ -1,18 +1,35 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <a class="navbar-brand" href="/home">Nathan's Blog</a>
 
-    <ul class="navbar-nav ml-5 mr-auto">
+    <ul class="navbar-nav">
+        <% if (user) { %>
+            <% if (user.role > 0) { %>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/panel">Administrative Panel</a>
+                </li>
+            <% } %>
+        <% } %>
+
         <li class="nav-item">
-            <a class="nav-link" href="/admin/panel">Administrative Panel</a>
+            <a class="nav-link" href="#">Link #1</a>
         </li>
 
         <li class="nav-item">
             <a class="nav-link" href="#">Link #2</a>
         </li>
+    </ul>
 
-        <li class="nav-item">
-            <a class="nav-link" href="#">Link #3</a>
-        </li>
+    <ul class="navbar-nav ml-auto">
+        <% if (!user) { %>
+            <li class="nav-item">
+                <a class="btn btn-outline-light mr-1" href="/login">Login</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="btn btn-outline-light ml-1" href="/signup">Sign up</a>
+            </li>
+        <% } else { %>
+        <% } %>
     </ul>
 </nav>
 <div class="container">
