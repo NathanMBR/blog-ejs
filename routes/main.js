@@ -14,6 +14,7 @@ const hourFormatter = require("../helpers/hourFormatter");
 // Middlewares
 const isNotLogged = require("../middlewares/isNotLogged");
 const nullFormValidation = require("../middlewares/nullFormValidation");
+const isLogged = require("../middlewares/isLogged");
 
 // Configs
 const config = require("../configs/config");
@@ -28,8 +29,7 @@ router.get("/home", (req, res) => {
     let page = req.query["page"];
     if (!page || isNaN(page) || Array.isArray(page) || page <= 0)
         page = 1;
-    else
-        console.log("\n\n\n" + typeof(page));
+    
     const limit = 5;
     const offset = page => {
         return limit * (page - 1);
@@ -179,6 +179,12 @@ router.post("/login", isNotLogged, (req, res) => {
         req.flash("errorMsg", "An internal error has occurred. Please, try again.");
         res.redirect("/login");
     });
+});
+
+router.get("/logout", isLogged, (req, res) => {
+    req.session.user = undefined;
+    req.flash("successMsg", "Successfully logged out!");
+    res.redirect("/home");
 });
 
 // Export
